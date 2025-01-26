@@ -94,12 +94,16 @@ def train(
             confidence = F.softmax(out, dim=1)
             pred = torch.argmax(confidence, dim=1)
 
+            metrics["predictions"].extend(pred.cpu().numpy())
+            metrics["targets"].extend(target.cpu().numpy())
+
         if mode == "regression":
             pred = out
 
+            metrics["predictions"].extend(pred.cpu().numpy().squeeze(-1))
+            metrics["targets"].extend(target.cpu().numpy().squeeze(-1))
+
         metrics["running_loss"] += loss.detach().cpu().item()
-        metrics["predictions"].extend(pred.detach().cpu().numpy().squeeze(-1))
-        metrics["targets"].extend(target.cpu().numpy().squeeze(-1))
 
     epoch_loss = metrics["running_loss"] / len(dataloader)
 
@@ -150,12 +154,16 @@ def validate(
             confidence = F.softmax(out, dim=1)
             pred = torch.argmax(confidence, dim=1)
 
+            metrics["predictions"].extend(pred.cpu().numpy())
+            metrics["targets"].extend(target.cpu().numpy())
+
         if mode == "regression":
             pred = out
 
+            metrics["predictions"].extend(pred.cpu().numpy().squeeze(-1))
+            metrics["targets"].extend(target.cpu().numpy().squeeze(-1))
+
         metrics["running_loss"] += loss.cpu().item()
-        metrics["predictions"].extend(pred.cpu().numpy().squeeze(-1))
-        metrics["targets"].extend(target.cpu().numpy().squeeze(-1))
 
     epoch_loss = metrics["running_loss"] / len(dataloader)
     
