@@ -1,5 +1,7 @@
 data/*
 *.pdf
 *.sh
+*.pbs
 *.pth
 */runs/*
+*/__pycache__/*

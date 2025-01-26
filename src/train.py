@@ -84,7 +84,6 @@ def train(
             methylation,
             mutation
         )
-
         loss = criterion(out, target)
 
         loss.backward()
@@ -99,7 +98,7 @@ def train(
             pred = out
 
         metrics["running_loss"] += loss.detach().cpu().item()
-        metrics["predictions"].extend(pred.cpu().numpy())
+        metrics["predictions"].extend(pred.detach().cpu().numpy())
         metrics["targets"].extend(target.cpu().numpy())
 
     epoch_loss = metrics["running_loss"] / len(dataloader)
@@ -185,13 +184,15 @@ def main():
     train_dataset = MultiOmicsDataset(
         table_path=os.path.join(data_dir, "train.csv"),
         drug_dir=os.path.join(data_dir, "drugs"),
-        cell_line_dir=os.path.join(data_dir, "cell-line")
+        cell_line_dir=os.path.join(data_dir, "cell-line"),
+        mode=args["mode"]
     )
 
     val_dataset = MultiOmicsDataset(
         table_path=os.path.join(data_dir, "validation.csv"),
         drug_dir=os.path.join(data_dir, "drugs"),
-        cell_line_dir=os.path.join(data_dir, "cell-line")
+        cell_line_dir=os.path.join(data_dir, "cell-line"),
+        mode=args["mode"]
     )
 
     device = "cuda" if torch.cuda.is_available() else "cpu"

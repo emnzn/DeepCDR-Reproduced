@@ -34,6 +34,12 @@ class MultiOmicsDataset(Dataset):
         drug_id = str(row["drug_id"])
         cell_line_id = row["cell_line_id"]
         target = row["label"] if self.mode == "classification" else row["ic50"]
+
+        if self.mode == "classification":
+            target = torch.tensor(target, dtype=torch.long)
+
+        else:
+            target = torch.tensor(target, dtype=torch.float32).unsqueeze(-1)
         
         drug_dir = os.path.join(self.drug_dir, drug_id)
         cell_line_dir = os.path.join(self.cell_line_dir, cell_line_id)
