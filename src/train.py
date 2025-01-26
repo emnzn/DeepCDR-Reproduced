@@ -98,8 +98,8 @@ def train(
             pred = out
 
         metrics["running_loss"] += loss.detach().cpu().item()
-        metrics["predictions"].extend(pred.detach().cpu().numpy())
-        metrics["targets"].extend(target.cpu().numpy())
+        metrics["predictions"].extend(pred.detach().cpu().numpy().squeeze(-1))
+        metrics["targets"].extend(target.cpu().numpy().squeeze(-1))
 
     epoch_loss = metrics["running_loss"] / len(dataloader)
 
