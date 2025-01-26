@@ -16,6 +16,7 @@ from sklearn.metrics import balanced_accuracy_score
 
 from utils import (
     get_args,
+    save_args,
     extract_graph,
     log_metrics,
     DeepCDR,
@@ -186,8 +187,8 @@ def main():
 
     data_dir = os.path.join("..", "data", "cleaned")
     log_dir = os.path.join("runs", args["mode"], identifier)
-
     writer = SummaryWriter(log_dir)
+    save_args(args, log_dir)
 
     train_dataset = MultiOmicsDataset(
         table_path=os.path.join(data_dir, "train.csv"),
@@ -215,7 +216,14 @@ def main():
         dropout_prob=args["dropout_prob"]
     ).to(device)
 
-    criterion = nn.CrossEntropyLoss() if args["mode"] == "classification" else nn.MSELoss()
+    if args["mode"] == "classification":
+        criterion = nn.CrossEntropyLoss()
+        performance_metric = "Max Balanced Accuracy"
+
+    if args["mode"] == "regression": 
+        criterion = nn.MSELoss()
+        performance_metric = "Max Pearson Correlation"
+
     optimizer = optim.Adam(model.parameters(), lr=args["learning_rate"], weight_decay=args["weight_decay"])
     scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, args["epochs"], eta_min=args["eta_min"])
 
@@ -266,16 +274,15 @@ def main():
         
         if val_performance > max_val_performance:
             save_filename = "highest-balanced-accuracy.pth" if args["mode"] == "classification" else "highest-pearson-correlation.pth"
+            
             torch.save(model.state_dict(), os.path.join(model_dir, save_filename))
             max_val_performance = val_performance
-            
-            print(f"New maximum {' '.join(save_filename.split('-')[1:2])} — model saved.")
+            print(f"New {performance_metric} — model saved.")
     
         scheduler.step()
 
         print("-------------------------------------------------------------------\n")
 
-    performance_metric = "Max Balanced Accuracy" if args["mode"] == "classification" else "Max Pearson Correlation"
     print("Run Summary:")
     print(f"Min Loss: {min_val_loss:.4f} | {performance_metric}: {max_val_performance:.4f}\n")
 

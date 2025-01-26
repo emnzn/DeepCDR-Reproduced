@@ -1,0 +1,10 @@
+output_dim: 100
+dropout_prob: 0.1
+
+mode: regression
+seed: 42
+epochs: 50
+batch_size: 64
+weight_decay: 1.0e-5
+learning_rate: 1.0e-4
+eta_min: 1.0e-6

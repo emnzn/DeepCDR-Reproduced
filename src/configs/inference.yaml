@@ -1,0 +1,4 @@
+batch_size: 20
+mode: classification
+identifier: 01-26-2025_15-hrs
+weights: highest-balanced-accuracy.pth
