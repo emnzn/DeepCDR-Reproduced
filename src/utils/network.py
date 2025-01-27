@@ -1,6 +1,9 @@
+from typing import List
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from torch_geometric.data import Data as GraphData
 from torch_geometric.nn import (
     GCNConv, 
     global_mean_pool, 
@@ -15,6 +18,24 @@ class DeepCDR(nn.Module):
         output_dim: int = 100,
         dropout_prob: float = 0.1,
         ):
+
+        """
+        Creates the DeepCDR model with the individual drug, gene, methylation,
+        and mutation encoders.
+
+        Parameters
+        ----------
+        mode: str
+            The model task.
+            One of [classification, regression].
+
+        output_dim: int
+            The output dimension of the individual encoders.
+
+        dropout_prob: float
+            The probability for the dropout layers of the network.
+        """
+
         super().__init__()
 
         valid_modes = ["classification", "regression"]
@@ -67,11 +88,33 @@ class DeepCDR(nn.Module):
 
     def forward(
         self, 
-        drug_graph, 
-        gene_expression_features, 
-        methylation_features, 
-        mutation_features
-        ):
+        drug_graph: List[GraphData], 
+        gene_expression_features: torch.Tensor, 
+        methylation_features: torch.Tensor, 
+        mutation_features: torch.Tensor
+        ) -> torch.Tensor:
+
+        """
+        Parameters
+        ----------
+        drug_graph: List[GraphData]
+            The graphs to be fed to the graph convolutional network.
+
+        gene_expression_features: torch.Tensor
+            The gene expression features.
+
+        methylation_features: torch.Tensor
+            The methylation features.
+
+        mutation_features: torch.Tensor
+            The mutation features.
+
+        Returns
+        -------
+        out: torch.Tensor
+            Logits if mode == classification.
+            IC50 predictions if mode == regression.
+        """
 
         drug_embedding = self.drug_net(
             drug_graph.x, 
@@ -116,6 +159,28 @@ class DrugGCN(nn.Module):
         output_dim: int = 100,
         dropout_prob: float = 0.1
         ):
+
+        """
+        The Graph Convolutional Network for drug encoding.
+
+        Parameters
+        ----------
+        input_dim: int
+            The dimension of the input features.
+
+        hidden_dim: int
+            The hidden dimension.
+
+        num_hidden: int
+            The number of hidden dimensions.
+
+        output_dim: int
+            The dimension of the output embedding.
+
+        dropout_prob: float
+            The probability of the dropout layers.
+        """
+
         super().__init__()
 
         self.embedding_layer = GraphSequential("x, edge_index", [
@@ -159,6 +224,22 @@ class MutationConv1d(nn.Module):
         output_dim: int = 100,
         dropout_prob: float = 0.1
         ):
+
+        """
+        The 1d Convolutional module for mutation encoding.
+
+        Parameters
+        ----------
+        in_channels: int
+            The number of input channels.
+        
+        output_dim: int
+            The dimension of the output embedding.
+
+        dropout_prob: float
+            The probability of the dropout layers.
+        """
+
         super().__init__()
         
         self.conv1 = nn.Sequential(
@@ -206,6 +287,23 @@ class MLP(nn.Module):
         output_dim: int = 100,
         dropout_prob: float = 0.1
         ):
+
+        """
+        The MLP module for encoding gene expression and methylation features.
+
+        input_dim: int
+            The dimension of the input features.
+
+        embedding_dim: int
+            The dimension of the first layer.
+
+        output_dim: int
+            The dimension of the output embedding.
+
+        dropout_prob: float
+            The probability of the dropoout layers.
+        """
+
         super().__init__()
 
         self.fc1 = nn.Sequential(

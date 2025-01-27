@@ -17,6 +17,43 @@ class MultiOmicsDataset(Dataset):
         cell_line_dir: str,
         mode: str = "classification"
         ):
+
+        """
+        The Dataset constructor.
+
+        Parameters
+        ----------
+        table_path: str
+            The path of the reference table with the following fields:
+                - pair_id
+                - label
+                - ic50
+                - cell_line_id
+                - drug_id
+                - cancer_type
+
+        drug_dir: str
+            The directory with drug features.
+            Must be in the form:
+                drugs/
+                |--drug_id
+                      |──drug-edge-list.npy
+                      └──drug-feature.npy
+        
+        cell_line_dir: str
+            The directory with cell line features.
+            Must be in the form:
+                cell-line/
+                |--cell_line_id
+                      |──gene-feature.npy
+                      |──methylation-feature.npy
+                      └──mutation-feature.npy
+
+        mode: str
+            The model task.
+            One of [classification, regression]. 
+        """
+
         super().__init__()
         valid_modes = ["classification", "regression"]
         assert mode in valid_modes, f"mode must be one of {valid_modes}"
@@ -69,6 +106,11 @@ class MultiOmicsDataset(Dataset):
         return drug_dict, cell_line_dict, target
 
 def extract_graph(drug_dict: Dict[str, str]):
+
+    """
+    Extract graphs from a dictionary of graph paths.
+    """
+
     features = [np.load(f) for f in drug_dict["feature_path"]]
     edge_lists = [np.load(f) for f in drug_dict["edge_list_path"]]
 

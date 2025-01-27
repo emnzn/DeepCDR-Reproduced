@@ -9,6 +9,10 @@ def log_metrics(
     performance: float
     ):
 
+    """
+    Logging function.
+    """
+
     print(f"{prefix} Statistics:")
     writer.add_scalar(f"{prefix}/Loss", loss, epoch)
 

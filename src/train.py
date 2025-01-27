@@ -61,8 +61,9 @@ def train(
     epoch_loss: float
         The average loss for the given epoch.
 
-    epoch_balanced_accuracy: float
-        The average balanced accuracy for the given epoch.  
+    performance: float
+        The average Balaced Accuracy if mode == classification.
+        The average Pearson Correlation Coefficient if mode == regression.
     """
 
     metrics = {
@@ -90,6 +91,8 @@ def train(
         loss.backward()
         optimizer.step()
         optimizer.zero_grad()
+
+        metrics["running_loss"] += loss.detach().cpu().item()
         
         if mode == "classification":
             confidence = F.softmax(out, dim=1)
@@ -103,8 +106,6 @@ def train(
 
             metrics["predictions"].extend(pred.cpu().numpy().squeeze(-1))
             metrics["targets"].extend(target.cpu().numpy().squeeze(-1))
-
-        metrics["running_loss"] += loss.detach().cpu().item()
 
     epoch_loss = metrics["running_loss"] / len(dataloader)
 

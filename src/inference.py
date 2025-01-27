@@ -29,7 +29,40 @@ def inference(
     ) -> Tuple[float, float]:
 
     """
-    Runs inference.
+    Runs inference and saves results as a csv file.
+
+    Parameters
+    ----------
+    dataloader: DataLoader
+        The data loader to iterate over.
+    
+    criterion: nn.Module
+        The loss function.
+
+    model: DeepCDR
+        The model to be trained.
+
+    mode: str
+        The model task.
+        One of [classification, regression].
+
+    device: str
+        One of [cuda, cpu].
+
+    reference_path: str
+        The path pointing to the test table.
+
+    save_dir: str
+        The directory to save reaults.
+
+    Returns
+    -------
+    loss: float
+        The average loss across the test set.
+
+    performance: float
+        The average Balaced Accuracy if mode == classification.
+        The average Pearson Correlation Coefficient if mode == regression.
     """
     
     metrics = {
@@ -69,7 +102,7 @@ def inference(
 
         metrics["loss"].extend(loss.squeeze().cpu().numpy())
 
-    epoch_loss = sum(metrics["loss"]) / len(dataloader)
+    loss = sum(metrics["loss"]) / len(dataloader)
     
     if mode == "classification":
         performance = balanced_accuracy_score(metrics["target"], metrics["prediction"])
@@ -79,7 +112,7 @@ def inference(
 
     save_results(metrics, reference_path, os.path.join(save_dir, "results.csv"))
 
-    return epoch_loss, performance
+    return loss, performance
 
 
 def main():

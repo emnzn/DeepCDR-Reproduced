@@ -10,12 +10,13 @@ def save_results(
     ) -> None:
 
     """
-    Saves the images, labels and embeddings from the dataset.
+    Saves the loss, prediction, target, cell line id cancer type and drug type
+    from the dataset.
 
     Parameters
     ----------
     results: Dict[str, Union[str, np.ndarray]]
-        A dictionary containing the images, labels and embeddings from the dataset.
+        A dictionary containing loss, prediction, and target for each sample.
     """
 
     df = pd.DataFrame(results)
