@@ -1,5 +1,6 @@
-data/*
+.data/*
 *.pdf
 *.sh
 *.pbs
-*/__pycache__/*
+.DS_Store
+__pycache__/
