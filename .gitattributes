@@ -3,3 +3,4 @@ data/* filter=lfs diff=lfs merge=lfs -text
 *.npy filter=lfs diff=lfs merge=lfs -text
 *.hkl filter=lfs diff=lfs merge=lfs -text
 *.csv filter=lfs diff=lfs merge=lfs -text
+data/raw/CCLE_RRBS_TSS_1kb_20180614.txt filter=lfs diff=lfs merge=lfs -text
