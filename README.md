@@ -11,10 +11,10 @@ In this repository, I implemented DeepCDR, a multimodal network designed to pred
 
 ## Inference Results
 
-| Classification Performance | Value      | Regression Performance   | Value      |
-|----------------------------|------------|--------------------------|------------|
-| Cross Entropy              | 3.9392     | Root Mean Square Error   | 5.0984     |
-| Balanced Accuracy          | **0.8882** | Pearson Correlation**    | **0.9120** |
+| Classification Performance | Value  | Regression Performance | Value  |
+|----------------------------|--------|------------------------|--------|
+| Cross Entropy              | 3.9392 | Root Mean Square Error | 5.0984 |
+| Balanced Accuracy          | 0.8882 | Pearson Correlation    | 0.9120 |
 
 ## Installation
 ```bash
