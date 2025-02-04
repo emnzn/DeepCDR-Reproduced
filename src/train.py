@@ -17,6 +17,7 @@ from sklearn.metrics import balanced_accuracy_score
 from utils import (
     get_args,
     save_args,
+    set_seed,
     extract_graph,
     log_metrics,
     DeepCDR,
@@ -190,6 +191,7 @@ def main():
     log_dir = os.path.join("runs", args["mode"], identifier)
     writer = SummaryWriter(log_dir)
     save_args(args, log_dir)
+    set_seed(args["seed"])
 
     train_dataset = MultiOmicsDataset(
         table_path=os.path.join(data_dir, "train.csv"),
